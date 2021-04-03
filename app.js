@@ -7,9 +7,15 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 const AppError = require("./utilities/AppError");
-
+const bcrypt = require("bcrypt");
 const campgroundRoute = require("./routes/campground");
 const reviewRoute = require("./routes/reviews");
+const userRoute = require("./routes/users");
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
+const User = require("./models/user");
 
 // database
 
@@ -41,6 +47,27 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 
+// passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+//----------- DEMO-------------//
+
+app.get("/demo", async (req, res) => {
+  const user = new User({
+    email: "ajaynayak@gmail.com",
+    username: "ajaynayak",
+  });
+  const newUser = await User.register(user, "evenDeathIamTheHero");
+  res.send(newUser);
+});
+
+//-----------------------------//
+
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -52,6 +79,10 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.render("home");
 });
+
+// User route
+
+app.use("/", userRoute);
 
 // campground route
 
