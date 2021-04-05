@@ -14,10 +14,18 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="/">Home</a>
+        <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/campgrounds">All Campgrounds</a>
         <a class="nav-link" href="/campgrounds/new">Add new</a>
       </div>
+    </div>
+    <div class="navbar-nav ml-auto">
+      <% if(!currentUser) { %>
+      <a class="nav-link" href="/login">Log In</a>
+      <a class="nav-link" href="/register">Sign up</a>
+      <% } else { %>
+      <a class="nav-link" href="/logout">Log Out</a>
+      <% } %>
     </div>
   </div>
 </nav>

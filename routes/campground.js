@@ -4,6 +4,8 @@ const AppError = require("../utilities/AppError");
 const Campground = require("../models/campground");
 const router = express.Router();
 
+const { isLoggedIn } = require("../middleware");
+
 router.get(
   "/",
   wrapAsync(async (req, res) => {
@@ -14,12 +16,13 @@ router.get(
 
 // Order of these app.get / app.post matters
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campground/createNew");
 });
 
 router.post(
   "/",
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     console.log(req.body);
     if (
@@ -55,6 +58,7 @@ router.get(
 
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
@@ -68,6 +72,7 @@ router.get(
 
 router.put(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     if (
       !req.body.title &&
@@ -94,6 +99,7 @@ router.put(
 
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
